@@ -38,7 +38,8 @@ export const create = mutation({
       .query("requests")
       .withIndex("by_reciever_sender", (q) =>
         q.eq("reciever", reciever._id).eq("sender", currentUser._id)
-      );
+      )
+      .unique();
 
     if (requestAlreadySent) {
       throw new ConvexError("Request already sent");
@@ -48,7 +49,8 @@ export const create = mutation({
       .query("requests")
       .withIndex("by_reciever_sender", (q) =>
         q.eq("reciever", currentUser._id).eq("sender", reciever._id)
-      );
+      )
+      .unique();
 
     if (requestAlreadyRecieved) {
       throw new ConvexError("Request already recieved");
@@ -59,5 +61,31 @@ export const create = mutation({
     });
 
     return request;
+  },
+});
+export const deny = mutation({
+  args: {
+    id: v.id("requests"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+    const currentUser = await getUserByClerkId({
+      ctx,
+      clerkId: identity.subject,
+    });
+
+    if (!currentUser) {
+      throw new ConvexError("User not found");
+    }
+    const request = await ctx.db.get(args.id);
+
+    if (!request || request.reciever !== currentUser._id) {
+      throw new ConvexError("Request not found");
+    }
+
+    await ctx.db.delete(request._id);
   },
 });
