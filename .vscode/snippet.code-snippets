@@ -1,0 +1,21 @@
+{
+  "TS React Functional Component with Props": {
+    "scope": "typescriptreact",
+    "prefix": "tsrafce",
+    "body": [
+      "import React from 'react';",
+      "",
+      "type Props = {}",
+      "const ${1:ComponentName} = (props: Props) => {",
+      "  return (",
+      "    <div>",
+      "      $0",
+      "    </div>",
+      "  );",
+      "};",
+      "",
+      "export default ${1:ComponentName};",
+    ],
+    "description": "TypeScript React Functional Component with Props",
+  },
+}
