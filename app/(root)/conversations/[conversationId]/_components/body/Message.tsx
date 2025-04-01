@@ -45,7 +45,7 @@ const Message = ({
           })}
         >
           {type === "text" ? (
-            <p className="text-wrap break-words whitespace-pre-wrap">
+            <p className="text-wrap break-words whitespace-pre-wrap break-all">
               {content}
             </p>
           ) : null}
@@ -65,7 +65,7 @@ const Message = ({
           "order-1": !fromCurrentUser,
         })}
       >
-        <AvatarImage src={senderImage} />
+        <AvatarImage src={senderImage} className="rounded-full" />
         <AvatarFallback> {senderName.substring(0, 1)}</AvatarFallback>
       </Avatar>
     </div>
