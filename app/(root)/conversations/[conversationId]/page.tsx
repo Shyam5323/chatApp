@@ -9,7 +9,6 @@ import Header from "./_components/Header";
 import { useParams } from "next/navigation";
 import Body from "./_components/body/Body";
 import ChatInput from "./_components/input/ChatInput";
-import { on } from "events";
 import RemoveFriendDialog from "./_components/dialogs/RemoveFriendDialog";
 import DeleteGroupDialog from "./_components/dialogs/DeleteGroupDialog";
 import LeaveGroupDialog from "./_components/dialogs/LeaveGroupDialog";
@@ -86,7 +85,17 @@ const ConversationPage = () => {
               ]
         }
       />
-      <Body />
+      <Body
+        members={
+          conversation.isGroup
+            ? conversation.otherMembers
+              ? conversation.otherMembers.filter((member) => member !== null)
+              : []
+            : conversation.otherMember
+              ? [conversation.otherMember].filter((member) => member !== null)
+              : []
+        }
+      />
       <ChatInput />
     </ConversationContainer>
   );
