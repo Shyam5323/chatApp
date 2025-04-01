@@ -32,7 +32,7 @@ const LeaveGroupDialog = ({ conversationId, open, setOpen }: Props) => {
         toast.success("Group left");
       })
       .catch((error) => {
-        error instanceof ConvexError ? error.data : "Unexpected error";
+        return error instanceof ConvexError ? error.data : "Unexpected error";
       });
   };
   return (

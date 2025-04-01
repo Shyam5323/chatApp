@@ -26,7 +26,7 @@ const ConversationPage = () => {
   const [deleteGroupDialogOpen, setDeleteGroupDialogOpen] =
     React.useState(false);
   const [leaveGroupDialogOpen, setLeaveGroupDialogOpen] = React.useState(false);
-  const [callType, setCallType] = React.useState<"audio" | "video">("audio");
+  // const [callType, setCallType] = React.useState<"audio" | "video">("audio");
 
   return conversation === undefined ? (
     <div className="w-full h-full flex items-center justify-center">

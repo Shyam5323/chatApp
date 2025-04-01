@@ -21,9 +21,9 @@ import {
 } from "@/components/ui/form";
 import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "@/components/ui/button";
-import { SendHorizonal, SendHorizonalIcon } from "lucide-react";
+import { SendHorizonalIcon } from "lucide-react";
 
-type Props = {};
+type Props = unknown;
 
 const chatMessageSchema = z.object({
   content: z.string().min(1, {
@@ -31,8 +31,8 @@ const chatMessageSchema = z.object({
   }),
 });
 
-const ChatInput = (props: Props) => {
-  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+const ChatInput = () => {
+  // const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const params = useParams();
   const conversationId = params?.conversationId as Id<"conversations">;
 

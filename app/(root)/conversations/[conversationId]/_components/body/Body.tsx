@@ -1,7 +1,7 @@
 "use client";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
 import React, { useEffect } from "react";
 import Message from "./Message";
@@ -13,13 +13,24 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-type Props = {
-  members: {
-    lastSeenMessageId?: Id<"messages">;
-    username?: string;
-    [key: string]: any;
-  }[];
+type Member = {
+  lastSeenMessageId?: Id<"messages">;
+  username?: string;
+  role?: string;
+  isActive?: boolean;
 };
+
+type Props = {
+  members: Member[];
+};
+
+// type Props = {
+//   members: {
+//     lastSeenMessageId?: Id<"messages">;
+//     username?: string;
+//     [key: string]: any;
+//   }[];
+// };
 const Body = ({ members }: Props) => {
   const params = useParams();
   const conversationId = params?.conversationId as Id<"conversations">;
@@ -37,7 +48,7 @@ const Body = ({ members }: Props) => {
         messageId: messages[0].message._id,
       });
     }
-  }, [messages?.length, conversationId, markRead]);
+  }, [messages, conversationId, markRead]);
 
   const formatSeenBy = (names: string[]) => {
     switch (names.length) {

@@ -30,7 +30,7 @@ const RemoveFriendDialog = ({ conversationId, open, setOpen }: Props) => {
         toast.success("Removed friend");
       })
       .catch((error) => {
-        error instanceof ConvexError ? error.data : "Unexpected error";
+        return error instanceof ConvexError ? error.data : "Unexpected error";
       });
   };
   return (
