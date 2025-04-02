@@ -9,17 +9,21 @@ export const get = query({
     if (!identity) {
       throw new ConvexError("Not authenticated");
     }
+
     const currentUser = await getUserByClerkId({
       ctx,
       clerkId: identity.subject,
     });
+
     if (!currentUser) {
       throw new ConvexError("User not found");
     }
+
     const conversationMembership = await ctx.db
       .query("conversationMembers")
       .withIndex("by_memberId", (q) => q.eq("memberId", currentUser._id))
       .collect();
+
     console.log("Conversation Membership:", conversationMembership);
 
     const conversations = await Promise.all(
@@ -46,6 +50,15 @@ export const get = query({
           id: conversation.lastMessageId,
         });
 
+        // Get the actual message object to access its creation time
+        const lastMessageObject = conversation.lastMessageId
+          ? await ctx.db.get(conversation.lastMessageId)
+          : null;
+
+        const lastMessageTime = lastMessageObject
+          ? lastMessageObject._creationTime
+          : 0;
+
         const lastSeenMessage = conversationMembership[index].lastSeenMessage
           ? await ctx.db.get(conversationMembership[index].lastSeenMessage)
           : null;
@@ -67,6 +80,7 @@ export const get = query({
           return {
             conversation,
             lastMessage,
+            lastMessageTime, // Add this field for sorting
             unseenCount: unseenMessages.length,
           };
         }
@@ -84,14 +98,19 @@ export const get = query({
           conversation,
           otherMember,
           lastMessage,
+          lastMessageTime, // Add this field for sorting
           unseenCount: unseenMessages.length,
         };
       })
     );
+
+    conversationsWithDetails.sort(
+      (a, b) => b.lastMessageTime - a.lastMessageTime
+    );
+
     return conversationsWithDetails;
   },
 });
-
 const getLastMessageDetails = async ({
   ctx,
   id,
