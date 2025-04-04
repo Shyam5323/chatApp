@@ -98,7 +98,7 @@ export const get = query({
           conversation,
           otherMember,
           lastMessage,
-          lastMessageTime, // Add this field for sorting
+          lastMessageTime,
           unseenCount: unseenMessages.length,
         };
       })
@@ -146,12 +146,10 @@ const getMessageContent = (type: string, content: string) => {
     case "text":
       return content;
     case "image":
-      return "Image";
-    case "video":
-      return "Video";
-    case "audio":
-      return "Audio";
+      return "[Image]";
+    case "files":
+      return "[File]";
     default:
-      return content;
+      return "[Non-text]";
   }
 };

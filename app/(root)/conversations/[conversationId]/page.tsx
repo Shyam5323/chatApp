@@ -26,7 +26,9 @@ const ConversationPage = () => {
   const [deleteGroupDialogOpen, setDeleteGroupDialogOpen] =
     React.useState(false);
   const [leaveGroupDialogOpen, setLeaveGroupDialogOpen] = React.useState(false);
-  // const [callType, setCallType] = React.useState<"audio" | "video">("audio");
+  const [callType, setCallType] = React.useState<"audio" | "video" | null>(
+    null
+  );
 
   return conversation === undefined ? (
     <div className="w-full h-full flex items-center justify-center">
@@ -84,6 +86,7 @@ const ConversationPage = () => {
                 },
               ]
         }
+        setCallType={setCallType}
       />
       <Body
         members={
@@ -95,6 +98,8 @@ const ConversationPage = () => {
               ? [conversation.otherMember].filter((member) => member !== null)
               : []
         }
+        callType={callType}
+        setCallType={setCallType}
       />
       <ChatInput />
     </ConversationContainer>

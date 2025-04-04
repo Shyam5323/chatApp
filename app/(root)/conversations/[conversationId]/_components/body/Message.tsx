@@ -3,6 +3,8 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { AvatarFallback } from "@/components/ui/avatar";
+import ImagePreview from "./ImagePreview";
+import FilePreview from "./FilePreview";
 type Props = {
   fromCurrentUser: boolean;
   senderImage: string;
@@ -51,6 +53,9 @@ const Message = ({
               {content}
             </p>
           ) : null}
+          {type === "image" ? <ImagePreview urls={content} /> : null}
+          {type === "file" ? <FilePreview url={content[0]} /> : null}
+
           <p
             className={cn("text-xs flex w-full my-1", {
               "text-primary-foreground justify-end": fromCurrentUser,

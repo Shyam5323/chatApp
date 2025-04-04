@@ -15,7 +15,7 @@ const FriendsPage = () => {
       <ItemList title="Friends" action={<AddFriendDialogue />}>
         {requests ? (
           requests.length === 0 ? (
-            <p className="w-full h-full flex items-center justify-center">
+            <p className="w-full h-max flex items-center justify-center">
               No requests found
             </p>
           ) : (

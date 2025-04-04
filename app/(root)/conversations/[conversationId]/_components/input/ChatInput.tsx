@@ -1,6 +1,6 @@
 "use client";
 import { Card } from "@/components/ui/card";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 
 import { useParams } from "next/navigation";
@@ -22,8 +22,9 @@ import {
 import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "@/components/ui/button";
 import { SendHorizonalIcon } from "lucide-react";
-
-type Props = unknown;
+import MessageActionsPopover from "./MessageActionsPopover";
+import { useTheme } from "next-themes";
+import EmojiPicker, { Theme } from "emoji-picker-react";
 
 const chatMessageSchema = z.object({
   content: z.string().min(1, {
@@ -32,9 +33,17 @@ const chatMessageSchema = z.object({
 });
 
 const ChatInput = () => {
-  // const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+  const emojiPickerRef = useRef<any>(null);
+
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+
+  const [cursorPosition, setCursorPosition] = useState(0);
+
   const params = useParams();
   const conversationId = params?.conversationId as Id<"conversations">;
+
+  const { theme } = useTheme();
 
   const { mutate: createMessge, pending } = useMutationState(
     api.message.create
@@ -47,12 +56,26 @@ const ChatInput = () => {
     },
   });
 
+  const content = form.watch("content", "");
+
   const handleInputChange = (event: any) => {
     const { value, selectionStart } = event.target;
 
     if (selectionStart !== null) {
       form.setValue("content", value);
+      setCursorPosition(selectionStart);
     }
+  };
+
+  const insertEmoji = (emoji: string) => {
+    const newText = [
+      content.substring(0, cursorPosition),
+      emoji,
+      content.substring(cursorPosition),
+    ].join("");
+
+    form.setValue("content", newText);
+    setCursorPosition(cursorPosition + emoji.length);
   };
 
   const handleSubmit = async (values: z.infer<typeof chatMessageSchema>) => {
@@ -63,6 +86,7 @@ const ChatInput = () => {
     })
       .then(() => {
         form.reset();
+        textAreaRef.current?.focus();
       })
       .catch((error) => {
         toast.error(
@@ -71,9 +95,37 @@ const ChatInput = () => {
       });
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target)
+      ) {
+        setEmojiPickerOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <Card className="w-full p-2 rounded-lg relative">
+      <div className="absolute bottom-16" ref={emojiPickerRef}>
+        <EmojiPicker
+          open={emojiPickerOpen}
+          theme={theme as Theme}
+          onEmojiClick={(emojiDetails) => {
+            insertEmoji(emojiDetails.emoji);
+            setEmojiPickerOpen(false);
+          }}
+          lazyLoadEmojis
+        />
+      </div>
       <div className="flex gap-2 items-end w-full">
+        <MessageActionsPopover setEmojiPickerOpen={setEmojiPickerOpen} />
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
